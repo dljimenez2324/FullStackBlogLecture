@@ -48,21 +48,21 @@
    -->
 
 <!--          ----------------------------------------               Models               ----------------------------------------                -->
-   <!-- Models for how to shape our data 
+<!-- Models for how to shape our data  -->
    
         Model Folder structure:
 
             UserModel:
                 Id: int
-                username: string
+                Username: string
                 Salt: string
                 Hash: string
    
-   -->
 
-   <!-- Models for our blog items
+
+        Models for our blog items
    
-            id: int
+            Id: int
             UserId: int
             PublisherName: string
             Title: string
@@ -73,7 +73,7 @@
             IsPublished: bool
             IsDeleted: bool
    
-    -->
+   
 
 <!------------------------------------------- Items that will be saved to our database are above ----------------------------------------->
 
