@@ -1,0 +1,11 @@
+
+body.bg-dark {
+  background-color: #343a40 !important;
+  color: rgb(174,168,168) !important;
+}
+
+body.bg-light {
+  background-color: #aaa9a9 !important;
+  color: rbg(53,48,48) !important;
+}
+
