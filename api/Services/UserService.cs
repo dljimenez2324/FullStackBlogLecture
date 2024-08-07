@@ -103,22 +103,34 @@ namespace api.Services
             return _context.UserInfo;
         }
 
+        public UserModel GetAllUserDataByUsername(string username)
+        {
+            return _context.UserInfo.FirstOrDefault(user => user.Username == username);
+        }
         public IActionResult Login(LoginDTO user)
         {
             IActionResult Result = Unauthorized();
             if (DoesUserExist(user.UserName))
             {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("reallylongkeysuperSecretKey@345678Hello"));
-                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                var tokeOptions = new JwtSecurityToken(
-                    issuer: "https://localhost:5001",
-                    audience: "https://localhost:5001",
-                    claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(5),
-                    signingCredentials: signinCredentials
-                );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                Result = Ok(new { Token = tokenString });
+
+                // password validation here
+                UserModel foundUser = GetAllUserDataByUsername(user.UserName);
+                if(VerifyUserPassword(user.Password, foundUser.Hash, foundUser.Salt))
+                {
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("reallylongkeysuperSecretKey@345678Hello"));
+                    var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var tokeOptions = new JwtSecurityToken(
+                        issuer: "https://localhost:5001",
+                        audience: "https://localhost:5001",
+                        claims: new List<Claim>(),
+                        expires: DateTime.Now.AddMinutes(5),
+                        signingCredentials: signinCredentials
+                    );
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                    Result = Ok(new { Token = tokenString });
+
+                }
+
             }
             return Result;
         }

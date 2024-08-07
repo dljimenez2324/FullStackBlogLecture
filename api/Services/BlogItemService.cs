@@ -26,7 +26,8 @@ namespace api.Services
 
         public bool DeleteBlogItem(BlogItemModel blogDelete)
         {
-            throw new NotImplementedException();
+            _context.Update<BlogItemModel>(blogDelete);
+            return _context.SaveChanges() !=0;
         }
 
         public IEnumerable<BlogItemModel> GetAllBlogItems()
@@ -41,23 +42,38 @@ namespace api.Services
 
         public IEnumerable<BlogItemModel> GetItemsByDate(string date)
         {
-            throw new NotImplementedException();
+            return _context.BlogInfo.Where(item => item.Date == date);
         }
 
-        // public List<BlogItemModel> GetItemsByTag(string Tag)
-        // {
-        //     List<BlogItemModel> AllBlogsWithTag = new List<BlogItemModel>();
-        //     var allItems = GetAllBlogItems().ToList();
-        //     for(int i = 0; i < allItems.Count; ++)
-        //     {
-        //         BlogItemModel Item = allItems[i];
-        //         var itemArr = Item.Tag.Split(',');
-        //     }
-        // }
+        public List<BlogItemModel> GetItemsByTag(string Tag)
+        {
+            List<BlogItemModel> AllBlogsWithTag = new List<BlogItemModel>();
+            var allItems = GetAllBlogItems().ToList();
+            for(int i = 0; i < allItems.Count; i++)
+            {
+                BlogItemModel Item = allItems[i];
+                var itemArr = Item.Tag.Split(',');
+                for(int j=0; j<itemArr.Length; j++)
+                {
+                    if(itemArr[j].Contains(Tag))
+                    {
+                        AllBlogsWithTag.Add(Item);
+                        break;
+                    }
+                }
+            }
+            return AllBlogsWithTag;
+        }
 
         public bool UpdateBlogItems(BlogItemModel blogUpdate)
         {
-            throw new NotImplementedException();
+            _context.Update<BlogItemModel>(blogUpdate);
+            return _context.SaveChanges() !=0;
+        }
+
+        public IEnumerable<BlogItemModel> GetPublishedItems()
+        {
+            return _context.BlogInfo.Where(item => item.IsPublished);
         }
     }
 }

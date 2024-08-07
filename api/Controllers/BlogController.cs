@@ -38,12 +38,12 @@ namespace api.Controllers
             return _data.GetItemByCategory(Category);
         }
 
-        // // GetItemsByTags
-        // [HttpGet("GetItemsByTag/{Tag}")]
-        // public List<BlogItemModel> GetItemsByTag(string Tag)
-        // {
-        //     return _data.GetItemsByTag(Tag);
-        // }
+        // GetItemsByTags
+        [HttpGet("GetItemsByTag/{Tag}")]
+        public List<BlogItemModel> GetItemsByTag(string Tag)
+        {
+            return _data.GetItemsByTag(Tag);
+        }
 
         //GetBlogItemsByDate
         [HttpGet("GetItemsByDate/{Date}")]
@@ -64,6 +64,13 @@ namespace api.Controllers
         public bool DeleteBlogItem(BlogItemModel BlogDelete)
         {
             return _data.DeleteBlogItem(BlogDelete);
+        }
+
+        //Get published Blog items
+        [HttpGet("GetPublishedItems")]
+        public IEnumerable<BlogItemModel> GetPublishedItems() 
+        {
+            return _data.GetPublishedItems();
         }
     }
 }
