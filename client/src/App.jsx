@@ -3,6 +3,7 @@ import { Container, Button, Row, Col } from 'react-bootstrap'
 import NavBar from './components/NavBar';
 import CarouselHero from './components/CarouselHero';
 import Dashboard from './components/Dashboard';
+import BlogPage from './components/BlogPage';
 
 const App = () => {
 
@@ -47,7 +48,8 @@ const App = () => {
               </Col>
             </Row>
 
-            <Dashboard isDarkMode={isDarkMode}/>
+            {/* <Dashboard isDarkMode={isDarkMode}/> */}
+            <BlogPage />
           
         </Container>
     </>
