@@ -90,7 +90,6 @@ const BlogPage = () => {
                     }
                 </Col>
             </Row>
-
         </Container>
     </>
   )
