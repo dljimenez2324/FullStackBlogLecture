@@ -29,3 +29,14 @@ body.bg-light {
   height: 400px;  
   opacity: 0.6;
 }
+
+.form-container {
+  width: 40px;
+  margin-left: 33%;
+  margin-right: 33%;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  border: solid;
+  padding: 80px;
+  border-radius: 20px;
+}

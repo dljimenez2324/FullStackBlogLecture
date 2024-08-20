@@ -65,13 +65,15 @@ const BlogPage = () => {
   return (
     <>
         <h1 className='text-center'>Blog Page</h1>
-        <Container>
+        <Container className='p-5'>
             <Row>
                 <Col>
-                    {
-                        blogItems.map((item, index) => 
-                        (
-                            <Row key={index}>
+
+                    {blogItems.map((item, index) => (
+                          <Container key={index}>
+                            {
+                              index% 2 == 0 ?
+                              <Row key={index}>
                                 <Col md={6}>
                                     <Row style={{border: "solid"}} >
                                         <Col style={{border: "solid"}} className='d-flex justify-content-center' md={12} >{item.Title}</Col>
@@ -86,6 +88,25 @@ const BlogPage = () => {
                                 </Col>
                                 <Col style={{border: "solid"}} className='d-flex justify-content-center' md={6}>{item.Text}</Col>
                             </Row>
+                            :
+                            <Row key={index}>
+                                    <Col style={{ border: "solid" }} className="d-flex justify-content-center" md={6}>Des</Col>
+                                    <Col md={6}>
+                                        <Row style={{ border: "solid" }} >
+                                            <Col style={{ border: "solid" }} className="d-flex justify-content-center" md={12}>Title</Col>
+                                            <Col md={12}>
+                                                <Row>
+                                                    <Col className="d-flex justify-content-center" md={6}>Publisher Name</Col>
+                                                    <Col className="text-center" style={{ border: "solid" }} md={6}>Date</Col>
+                                                </Row>
+                                            </Col>
+                                            <Col style={{ border: "solid" }} className="d-flex justify-content-center" md={12}>Image</Col>
+                                        </Row>
+
+                                    </Col>
+                                </Row>
+                            } 
+                          </Container>
                         ))
                     }
                 </Col>
