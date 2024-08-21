@@ -3,8 +3,12 @@ import { Container, Row, Col } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+
+    // to use the navigate to force routing
+    let navigate = useNavigate();
 
     // useStates
         const [Username, setUsername] = useState('');
@@ -55,7 +59,7 @@ const Login = () => {
                             Login
                         </Button>
                         <p className="mt-3">Don't have an account?</p>
-                        <Button variant="outline-primary" onClick={handleSubmit}>
+                        <Button variant="outline-primary" onClick={() => navigate('/CreateAccount')}>
                             Create Account
                         </Button>
                     </Form>

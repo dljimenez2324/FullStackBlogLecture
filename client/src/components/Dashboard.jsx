@@ -2,8 +2,11 @@ import React from "react";
 import { useState } from "react";
 import { Container, Row, Col, Button, Modal, Form, FormLabel, Accordion, ListGroup } from "react-bootstrap";
 
+import { useNavigate } from 'react-router-dom';
+import { checkToken } from "../Services/DataService";
+
 const Dashboard = ({ isDarkMode }) => {
-    // usestates
+    // useStates
 
     const [blogTitle, setBlogTitle] = useState("");
     const [blogImage, setBlogImage] = useState("");
@@ -110,6 +113,17 @@ const Dashboard = ({ isDarkMode }) => {
     }
 
 
+    let navigate = useNavigate();
+    // useEffect for forcing navigation  since it fires 'on load' 
+    useEffect(() => {
+      
+        if(!checkToken())
+        {
+            navigate('/Login')
+        }
+      
+    }, [])
+    
 
 
 
