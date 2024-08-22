@@ -34,4 +34,33 @@ const createAccount = async(createduser) => {
     console.log(data);
 }
 
-export { checkToken, createAccount }
+// helper function to hold login logic
+const login = async (loginUser) => {
+    const result = await fetch('http://localhost:5041/api/User/Login', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(loginUser)
+    })
+    if(!result.ok)
+    {
+        const message = `Yo! You have an error! Check your code ${result.status}`
+        throw new Error(message);
+
+    }
+    let data = await result.json();
+    console.log(data);
+    return data
+
+}
+
+// get our endpoint by our username to pass in to get our result
+const GetLoggedInUser = async (username) => 
+{
+    let result = await fetch(`"http://localhost:5041/api/User/GetUserByUserName/${username}"`)
+        console.log(result)
+}
+  
+
+export { checkToken, createAccount, login, GetLoggedInUser }

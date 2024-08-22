@@ -4,8 +4,9 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import { useNavigate } from 'react-router-dom';
+import { GetLoggedInUser, login } from "../Services/DataService";
 
-const Login = () => {
+const Login = ({onLogin}) => {
 
     // to use the navigate to force routing
     let navigate = useNavigate();
@@ -27,12 +28,23 @@ const Login = () => {
     }
 
     // method to handle the submit of the form
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let userData = {
             username: Username,
             password: Password
         }
         console.log(userData);
+
+        // this is our handlelogin passed through from app.jsx
+        onLogin(userData);
+        let token = await login(userData);
+        console.log(token.token, "This will show our token")
+        if(token.token !=null)
+        {
+            localStorage.setItem("Token", token.token);
+            GetLoggedInUser(Username);
+            navigate('/Dashboard');
+        }
     }
 
 
