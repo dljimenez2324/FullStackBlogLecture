@@ -13,7 +13,7 @@ import {
 } from "react-bootstrap";
 
 import { useNavigate } from "react-router-dom";
-import { checkToken } from "../Services/DataService";
+import { checkToken, LoggedInData } from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode }) => {
   // useStates
@@ -80,6 +80,7 @@ const Dashboard = ({ isDarkMode }) => {
   ]);
 
   const handleSaveWithPublish = () => {
+    let {userId, publisherName} = LoggedInData();
     const published = {
       Id: 0,
       UserId: userId,
@@ -93,21 +94,26 @@ const Dashboard = ({ isDarkMode }) => {
       IsPublished: true,
       IsDeleted: false,
     };
+    console.log(published);
   };
+
   const handleSaveWithUnpublish = () => {
-    const published = {
+    let {userId, publisherName} = LoggedInData();
+    const notPublished = {
       Id: 0,
-      UserId: 0,
-      PublisherName: "",
-      Tag: "",
-      Title: "",
-      Image: "",
-      Description: "",
-      Date: "",
-      Category: "",
-      IsPublished: true,
+      UserId: userId,
+      PublisherName: publisherName,
+      Tag: blogTags,
+      Title: blogTitle,
+      Image: blogImage,
+      Description: blogDescription,
+      Date: new Date(),
+      Category: blogCategory,
+      IsPublished: false,
       IsDeleted: false,
     };
+    console.log(notPublished);
+    
   };
 
   const handleClose = () => setShow(false);
@@ -142,9 +148,18 @@ const Dashboard = ({ isDarkMode }) => {
   const handleCategory = (e) => {
     setBlogCategory(e.target.value);
   };
-  const handleImage = (e) => {
-    setBlogImage(e.target.value);
-  };
+//   const handleImage = (e) => {
+//     setBlogImage(e.target.value);
+//   };
+  ////
+  const handleImage = async (e) => {
+    let file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        console.log(reader.result);
+    }
+    reader.readAsDataURL(file);
+  }
 
   let navigate = useNavigate();
   // useEffect for forcing navigation  since it fires 'on load'
@@ -198,9 +213,10 @@ const Dashboard = ({ isDarkMode }) => {
                 />
               </Form.Group>
 
-              <Form.Group>
+              <Form.Group controlId="Category">
+                <Form.Label>Category</Form.Label>
                 <Form.Select
-                  controlId="Category"
+                  
                   value={blogCategory}
                   onChange={handleCategory}
                 >
@@ -227,7 +243,8 @@ const Dashboard = ({ isDarkMode }) => {
                 <Form.Control
                   type="file"
                   placeholder="Select an Image from file"
-                  value={blogImage}
+                  accept="image/png, image/jpg"
+                //   value={blogImage}
                   onChange={handleImage}
                 />
               </Form.Group>
