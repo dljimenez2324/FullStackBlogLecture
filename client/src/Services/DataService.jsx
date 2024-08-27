@@ -1,5 +1,7 @@
 // helper functions here but not a component  so not a rafce
 
+let userData = {};
+
 // helper function to check our token in our local storage 
 const checkToken = () => {
     let result = false;
@@ -58,9 +60,15 @@ const login = async (loginUser) => {
 // get our endpoint by our username to pass in to get our result
 const GetLoggedInUser = async (username) => 
 {
-    let result = await fetch(`"http://localhost:5041/api/User/GetUserByUserName/${username}"`)
-        console.log(result)
+    let result = await fetch(`http://localhost:5041/api/User/GetUserByUserName/${username}`)
+    
+    userData = await result.json();
+    console.log(userData);
 }
-  
 
-export { checkToken, createAccount, login, GetLoggedInUser }
+const LoggedInData = () =>
+{
+    return userData;
+}
+
+export { checkToken, createAccount, login, GetLoggedInUser, LoggedInData }

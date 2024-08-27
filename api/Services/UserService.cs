@@ -115,7 +115,7 @@ namespace api.Services
 
                 // password validation here
                 UserModel foundUser = GetAllUserDataByUsername(user.UserName);
-                if(VerifyUserPassword(user.Password, foundUser.Hash, foundUser.Salt))
+                if (VerifyUserPassword(user.Password, foundUser.Hash, foundUser.Salt))
                 {
                     var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("reallylongkeysuperSecretKey@345678Hello"));
                     var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -135,10 +135,15 @@ namespace api.Services
             return Result;
         }
 
-        internal UserIdDTO GetUserIdDTOByUserName(string username)
+        public UserIdDTO GetUserIdDTOByUserName(string username)
         {
             // return _context.UserInfo.SingleOrDefault(user => user.Username == username);   wont work cause doesnt match model types
-            throw new NotImplementedException();
+            var UserInfo = new UserIdDTO();
+            var foundUser = _context.UserInfo.SingleOrDefault(user => user.Username == username);
+            UserInfo.UserId = foundUser.Id;
+            UserInfo.PublisherName = foundUser.Username;
+
+            return UserInfo;
         }
 
         public UserModel GetUserByUserName(string? username)
@@ -155,7 +160,7 @@ namespace api.Services
             {
                 foundUser.Username = userToDelete;
                 _context.Remove<UserModel>(foundUser);
-                result = _context.SaveChanges() !=0;
+                result = _context.SaveChanges() != 0;
             }
             return result;
             // get the object and update it
@@ -172,11 +177,11 @@ namespace api.Services
         {
             UserModel foundUser = GetUserById(id);
             bool result = false;
-            if(foundUser != null)
+            if (foundUser != null)
             {
                 foundUser.Username = username;
                 _context.Update<UserModel>(foundUser);
-                result = _context.SaveChanges() !=0;
+                result = _context.SaveChanges() != 0;
             }
             return result;
         }
