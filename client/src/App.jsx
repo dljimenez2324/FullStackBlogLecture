@@ -9,7 +9,7 @@ import Login from "./components/Login";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [user, setUser] = useState(null);
 
   // to handle the login
@@ -44,7 +44,7 @@ const App = () => {
           style={{ minHeight: "100vh", padding: "0px" }}
         >
           <Container className="p-0" fluid>
-            <NavBar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+            <NavBar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} user={user} />
           </Container>
           <CarouselHero isDarkMode={isDarkMode} />
           <Row className="text-center">

@@ -71,4 +71,66 @@ const LoggedInData = () =>
     return userData;
 }
 
-export { checkToken, createAccount, login, GetLoggedInUser, LoggedInData }
+// we need a function to help us add our blog items to the back end
+const AddBlogItems = async (blogItems) =>
+{
+    const result = await fetch('http://localhost:5041/api/Blog/AddBlogItems', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(blogItems)
+    })
+    if(!result.ok)
+    {
+        const message = `Yo! You have an error! Check your code ${result.status}`
+        throw new Error(message);
+
+    }
+    let data = await result.json();
+    console.log(data);
+    return data
+}
+
+// can we make a function to handle all of these so that its simpler this can be called in our other components
+const sendData = async(controller, endpoint, passedInData) =>
+{
+    const result = await fetch(`http://localhost:5041/api/${controller}/${endpoint}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(passedInData)
+    })
+    if(!result.ok)
+    {
+        const message = `Yo! You have an error! Check your code ${result.status}`
+        throw new Error(message);
+
+    }
+    let data = await result.json();
+    console.log(data);
+    return data
+}
+
+// method or function to get our blogItems
+const getBlogItems = async () =>
+{
+    let result = await fetch("http://localhost:5041/api/Blog/GetBlogItem")
+    let data = await result.json()
+    
+    console.log(data, "from our getblogitems method");
+    return data;
+}
+
+// create a function to hit our GetItemsByUserId
+const GetItemsByUserId = async (UserId) =>
+{
+    let result = await fetch(`http://localhost:5041/api/Blog/GetItemsByUserId/${UserId}`)
+    let data = await result.json()
+    
+    console.log(data, "from our getItemsByUserId method");
+    return data;
+}
+
+export { checkToken, createAccount, login, GetLoggedInUser, LoggedInData, sendData, AddBlogItems, getBlogItems, GetItemsByUserId }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
 using api.Services.Context;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Services
@@ -74,6 +75,11 @@ namespace api.Services
         public IEnumerable<BlogItemModel> GetPublishedItems()
         {
             return _context.BlogInfo.Where(item => item.IsPublished);
+        }
+
+        public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)
+        {
+            return _context.BlogInfo.Where(item => item.UserId == userId);
         }
     }
 }
