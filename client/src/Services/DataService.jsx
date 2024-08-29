@@ -2,6 +2,13 @@
 
 let userData = {};
 
+// lets store data in our local storage
+// store our userData in local storage
+// check if
+if(localStorage.getItem("UserData")){
+    userData = JSON.parse(localStorage.getItem("UserData"));
+}
+
 // helper function to check our token in our local storage 
 const checkToken = () => {
     let result = false;
@@ -52,6 +59,11 @@ const login = async (loginUser) => {
 
     }
     let data = await result.json();
+    if(data.token !=null)
+    {
+        localStorage.setItem("Token", data.token);
+        localStorage.setItem("UserData", JSON.stringify(data.user)); // we might have to comment out
+    }
     console.log(data);
     return data
 
@@ -63,11 +75,16 @@ const GetLoggedInUser = async (username) =>
     let result = await fetch(`http://localhost:5041/api/User/GetUserByUserName/${username}`)
     
     userData = await result.json();
-    console.log(userData);
+    console.log(userData, "getloggedinuser method");
+    localStorage.setItem("UserData", JSON.stringify(userData));
+    userData = JSON.parse(localStorage.getItem("UserData"));
 }
 
 const LoggedInData = () =>
-{
+{   
+    if(!userData && localStorage.getItem("UserData")) {
+        userData = JSON.parse(localStorage.getItem("UserData"));
+    }
     return userData;
 }
 
@@ -88,7 +105,7 @@ const AddBlogItems = async (blogItems) =>
 
     }
     let data = await result.json();
-    console.log(data);
+    console.log(data, "addblogItems method");
     return data
 }
 

@@ -61,7 +61,7 @@ const Dashboard = ({ isDarkMode }) => {
     }
   };
 
-  const handleSaveWithUnpublish = () => {
+  const handleSaveWithUnpublish = async () => {
     let {userId, publisherName} = LoggedInData();
     const notPublished = {
       Id: 0,
@@ -77,7 +77,14 @@ const Dashboard = ({ isDarkMode }) => {
       IsDeleted: false,
     };
     console.log(notPublished);
-    
+    handleClose();
+    let result = await AddBlogItems(notPublished);
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(userId);
+      setBlogItems(userBlogItems);
+      console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
+    }
   };
 
   const handleClose = () => setShow(false);
@@ -121,15 +128,36 @@ const Dashboard = ({ isDarkMode }) => {
     const reader = new FileReader();
     reader.onloadend = () => {
         console.log(reader.result);
+        setBlogImage(reader.result);
     }
     reader.readAsDataURL(file);
   }
 
+  // navigate variable for use
   let navigate = useNavigate();
+
+  // load userData to fetch data
+  const loadUserData = async () => {
+    let userInfo = LoggedInData();
+    setUserId(userInfo.userId);
+    setPublisherName(userInfo.publisherName);
+    console.log("userInfo: ", userInfo);
+    setTimeout(async () => {
+
+      let userBlogItems = await GetItemsByUserId(userInfo.userId);
+      setBlogItems(userBlogItems);
+      console.log("Loaded blog items: ", userBlogItems);
+    }, 1000)
+  }
+
   // useEffect for forcing navigation  since it fires 'on load'
   useEffect(() => {
     if (!checkToken()) {
       navigate("/Login");
+    }
+    else {
+
+      loadUserData();
     }
   }, []);
 

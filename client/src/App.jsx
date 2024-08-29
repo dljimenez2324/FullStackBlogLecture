@@ -31,6 +31,16 @@ const App = () => {
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("UserData");
+    if(storedUser)
+    {
+      let Userstored = JSON.parse(storedUser);
+      setUser(Userstored);
+    }
+  }, [])
+  
+
   const toggleDarkMode = () => {
     setIsDarkMode((prevMode) => !prevMode);
   };
@@ -55,7 +65,7 @@ const App = () => {
             {/* Area for our routes to go to different pages */}
             <Routes>
               <Route path="/" element={<BlogPage/>} />
-              <Route path="/Login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/Login" element={<Login onLogin={handleLogin} setUser={setUser} />} />
               <Route path="/CreateAccount" element={<CreateAccount/>} />
               <Route path="/Dashboard" element={<Dashboard isDarkMode={isDarkMode}/>} />
             </Routes>

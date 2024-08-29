@@ -6,7 +6,7 @@ import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 import { GetLoggedInUser, login } from "../Services/DataService";
 
-const Login = ({onLogin}) => {
+const Login = ({onLogin, setUser }) => {
 
     // to use the navigate to force routing
     let navigate = useNavigate();
@@ -31,7 +31,8 @@ const Login = ({onLogin}) => {
     const handleSubmit = async () => {
         let userData = {
             username: Username,
-            password: Password
+            password: Password,
+            publisherName: Username
         }
         console.log(userData);
 
@@ -42,9 +43,12 @@ const Login = ({onLogin}) => {
         if(token.token !=null)
         {
             localStorage.setItem("Token", token.token);
+            localStorage.setItem("UserData", JSON.stringify(userData));
             GetLoggedInUser(Username);
             navigate('/Dashboard');
         }
+        setUser(userData);
+        return userData;
     }
 
 
