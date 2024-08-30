@@ -15,7 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AddBlogItems, checkToken, GetItemsByUserId, LoggedInData } from "../Services/DataService";
 
-const Dashboard = ({ isDarkMode }) => {
+const Dashboard = ({ isDarkMode, onLogin }) => {
   // useStates
 
   const [show, setShow] = useState(false);
@@ -139,6 +139,7 @@ const Dashboard = ({ isDarkMode }) => {
   // load userData to fetch data
   const loadUserData = async () => {
     let userInfo = LoggedInData();
+    onLogin(userInfo);
     setUserId(userInfo.userId);
     setPublisherName(userInfo.publisherName);
     console.log("userInfo: ", userInfo);
