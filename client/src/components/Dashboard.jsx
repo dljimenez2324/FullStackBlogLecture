@@ -11,9 +11,15 @@ import {
   Accordion,
   ListGroup,
 } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
 
 import { useNavigate } from "react-router-dom";
-import { AddBlogItems, checkToken, GetItemsByUserId, LoggedInData } from "../Services/DataService";
+import {
+  AddBlogItems,
+  checkToken,
+  GetItemsByUserId,
+  LoggedInData,
+} from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode, onLogin }) => {
   // useStates
@@ -29,14 +35,13 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
   const [userId, setUserId] = useState(0);
   const [publisherName, setPublisherName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   // copied from slack
-  const [blogItems, setBlogItems] = useState([
-    
-  ]);
+  const [blogItems, setBlogItems] = useState([]);
 
   const handleSaveWithPublish = async () => {
-    let {userId, publisherName} = LoggedInData();
+    let { userId, publisherName } = LoggedInData();
     const published = {
       Id: 0,
       UserId: userId,
@@ -53,8 +58,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     console.log(published);
     handleClose();
     let result = await AddBlogItems(published);
-    if(result)
-    {
+    if (result) {
       let userBlogItems = await GetItemsByUserId(userId);
       setBlogItems(userBlogItems);
       console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
@@ -62,7 +66,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   };
 
   const handleSaveWithUnpublish = async () => {
-    let {userId, publisherName} = LoggedInData();
+    let { userId, publisherName } = LoggedInData();
     const notPublished = {
       Id: 0,
       UserId: userId,
@@ -79,8 +83,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     console.log(notPublished);
     handleClose();
     let result = await AddBlogItems(notPublished);
-    if(result)
-    {
+    if (result) {
       let userBlogItems = await GetItemsByUserId(userId);
       setBlogItems(userBlogItems);
       console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
@@ -119,19 +122,19 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const handleCategory = (e) => {
     setBlogCategory(e.target.value);
   };
-//   const handleImage = (e) => {
-//     setBlogImage(e.target.value);
-//   };
+  //   const handleImage = (e) => {
+  //     setBlogImage(e.target.value);
+  //   };
   ////
   const handleImage = async (e) => {
     let file = e.target.files[0];
     const reader = new FileReader();
     reader.onloadend = () => {
-        console.log(reader.result);
-        setBlogImage(reader.result);
-    }
+      console.log(reader.result);
+      setBlogImage(reader.result);
+    };
     reader.readAsDataURL(file);
-  }
+  };
 
   // navigate variable for use
   let navigate = useNavigate();
@@ -144,20 +147,18 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     setPublisherName(userInfo.publisherName);
     console.log("userInfo: ", userInfo);
     setTimeout(async () => {
-
       let userBlogItems = await GetItemsByUserId(userInfo.userId);
       setBlogItems(userBlogItems);
+      setIsLoading(false);
       console.log("Loaded blog items: ", userBlogItems);
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   // useEffect for forcing navigation  since it fires 'on load'
   useEffect(() => {
     if (!checkToken()) {
       navigate("/Login");
-    }
-    else {
-
+    } else {
       loadUserData();
     }
   }, []);
@@ -208,11 +209,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
               <Form.Group controlId="Category">
                 <Form.Label>Category</Form.Label>
-                <Form.Select
-                  
-                  value={blogCategory}
-                  onChange={handleCategory}
-                >
+                <Form.Select value={blogCategory} onChange={handleCategory}>
                   <option>Select Category</option>
                   <option value="Food">Food</option>
                   <option value="Fitness">Fitness</option>
@@ -237,7 +234,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
                   type="file"
                   placeholder="Select an Image from file"
                   accept="image/png, image/jpg"
-                //   value={blogImage}
+                  //   value={blogImage}
                   onChange={handleImage}
                 />
               </Form.Group>
@@ -255,49 +252,65 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        
+
         {/* Acordian Below */}
+        {/* Check to see if blogitems has info in it */}
+        {isLoading ? (
+          <>
+            <Spinner animation="grow" variant="info" /> 
+            <h2>...Loading</h2>
+          </>
+        ) : blogItems.length === 0 ? (
+          <>
+            <h2 className="text-center m-3">No Blog Items Found</h2>
+            <Spinner animation="grow" variant="info" />
+          </>
+        ) : (
+          <Accordion defaultActiveKey={["0", "1"]} alwaysOpen>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Published</Accordion.Header>
+              <Accordion.Body>
+                {blogItems.map(
+                  (item, i) =>
+                    item.isPublished && (
+                      <ListGroup key={i}>
+                        {item.title}
 
-        <Accordion defaultActiveKey={["0", "1"]} alwaysOpen>
-          <Accordion.Item eventKey="0">
-            <Accordion.Header>Published</Accordion.Header>
-            <Accordion.Body>
-              {blogItems.map(
-                (item, i) =>
-                  item.isPublished && (
-                    <ListGroup key={i}>
-                      {item.title}
+                        <Col className="d-flex justify-content-end mx-2">
+                          <Button variant="outline-danger mx-2">Delete</Button>
+                          <Button variant="outline-info mx-2">Edit</Button>
+                          <Button variant="outline-primary mx-2">
+                            Publish
+                          </Button>
+                        </Col>
+                      </ListGroup>
+                    )
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>Unpublished</Accordion.Header>
+              <Accordion.Body>
+                {blogItems.map(
+                  (item, i) =>
+                    !item.isPublished && (
+                      <ListGroup key={i}>
+                        {item.title}
 
-                      <Col className="d-flex justify-content-end mx-2">
-                        <Button variant="outline-danger mx-2">Delete</Button>
-                        <Button variant="outline-info mx-2">Edit</Button>
-                        <Button variant="outline-primary mx-2">Publish</Button>
-                      </Col>
-                    </ListGroup>
-                  )
-              )}
-            </Accordion.Body>
-          </Accordion.Item>
-          <Accordion.Item eventKey="1">
-            <Accordion.Header>Unpublished</Accordion.Header>
-            <Accordion.Body>
-              {blogItems.map(
-                (item, i) =>
-                  !item.isPublished && (
-                    <ListGroup key={i}>
-                      {item.title}
-
-                      <Col className="d-flex justify-content-end mx-2">
-                        <Button variant="outline-danger mx-2">Delete</Button>
-                        <Button variant="outline-info mx-2">Edit</Button>
-                        <Button variant="outline-primary mx-2">Publish</Button>
-                      </Col>
-                    </ListGroup>
-                  )
-              )}
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
+                        <Col className="d-flex justify-content-end mx-2">
+                          <Button variant="outline-danger mx-2">Delete</Button>
+                          <Button variant="outline-info mx-2">Edit</Button>
+                          <Button variant="outline-primary mx-2">
+                            Publish
+                          </Button>
+                        </Col>
+                      </ListGroup>
+                    )
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        )}
       </Container>
     </>
   );
