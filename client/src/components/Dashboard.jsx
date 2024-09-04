@@ -37,10 +37,14 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const [publisherName, setPublisherName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const [blogId, setBlogId] = useState(0);
+  const [IsDeleted, setIsDeleted] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
+
   // copied from slack
   const [blogItems, setBlogItems] = useState([]);
 
-  const handleSaveWithPublish = async () => {
+  const handleSave = async ({target:{textContent}}) => {
     let { userId, publisherName } = LoggedInData();
     const published = {
       Id: 0,
@@ -52,7 +56,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       Description: blogDescription,
       Date: new Date(),
       Category: blogCategory,
-      IsPublished: true,
+      IsPublished: textContent === "Save" ? false : true,
       IsDeleted: false,
     };
     console.log(published);
@@ -65,48 +69,62 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     }
   };
 
-  const handleSaveWithUnpublish = async () => {
-    let { userId, publisherName } = LoggedInData();
-    const notPublished = {
-      Id: 0,
-      UserId: userId,
-      PublisherName: publisherName,
-      Tag: blogTags,
-      Title: blogTitle,
-      Image: blogImage,
-      Description: blogDescription,
-      Date: new Date(),
-      Category: blogCategory,
-      IsPublished: false,
-      IsDeleted: false,
-    };
-    console.log(notPublished);
-    handleClose();
-    let result = await AddBlogItems(notPublished);
-    if (result) {
-      let userBlogItems = await GetItemsByUserId(userId);
-      setBlogItems(userBlogItems);
-      console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
-    }
-  };
+  // going to refactor our code and not use this
+  // const handleSaveWithUnpublish = async () => {
+  //   let { userId, publisherName } = LoggedInData();
+  //   const notPublished = {
+  //     Id: 0,
+  //     UserId: userId,
+  //     PublisherName: publisherName,
+  //     Tag: blogTags,
+  //     Title: blogTitle,
+  //     Image: blogImage,
+  //     Description: blogDescription,
+  //     Date: new Date(),
+  //     Category: blogCategory,
+  //     IsPublished: false,
+  //     IsDeleted: false,
+  //   };
+  //   console.log(notPublished);
+  //   handleClose();
+  //   let result = await AddBlogItems(notPublished);
+  //   if (result) {
+  //     let userBlogItems = await GetItemsByUserId(userId);
+  //     setBlogItems(userBlogItems);
+  //     console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
+  //   }
+  // };
 
   const handleClose = () => setShow(false);
-  const handleShow = (e) => {
+
+  // handleShow
+  const handleShow = (e, {id, publishername, userId, IsDeleted, isPublished, title, description ,category ,tag ,image}) => {
+    
     setShow(true);
 
     if (e.target.textContent === "Add Blog Item") {
       setEdit(false);
-      setBlogTitle("");
-      setBlogDescription("");
-      setBlogCategory("");
+      // setBlogTitle(title);
+      // setBlogDescription(description);
+      // setBlogCategory(category);
+      console.log(e.target.textContent, edit);
     } else {
       setEdit(true);
-      setBlogTitle("My Awesome Title");
-      setBlogDescription("My Awesome Description");
-      setBlogCategory("Fitness");
     }
 
+    // moved outside of the else statement above
+    setBlogId(id);
+    setBlogTitle(title);
+    setUserId(userId);
+    setPublisherName(publishername);
+    setBlogDescription(description);
+    setBlogCategory(category);
+    setBlogTags(tag);
+    setBlogImage(image);
+    setIsDeleted(IsDeleted);
+    setIsPublished(isPublished);
     console.log(e.target.textContent, edit);
+
   };
 
   const handleTitle = (e) => {
@@ -149,6 +167,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     setTimeout(async () => {
       let userBlogItems = await GetItemsByUserId(userInfo.userId);
       setBlogItems(userBlogItems);
+      setUserId(userId);
       setIsLoading(false);
       console.log("Loaded blog items: ", userBlogItems);
     }, 1000);
@@ -170,7 +189,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
         className={isDarkMode ? "bg-dark text-light p-5" : "bg-light p-5"}
         fluid
       >
-        <Button variant="outline-primary m-2" onClick={handleShow}>
+        <Button variant="outline-primary m-2" onClick={(e) => handleShow(e, {id:0, userId:userId, title:"", description:"", category:"", tag:"", image:"", IsDeleted:false, isPublished:false, publishername:publisherName})}>
           Add Blog Item
         </Button>
         <Button variant="outline-primary m-2" onClick={handleShow}>
@@ -244,10 +263,10 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
             <Button variant="outline-secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="outline-primary" onClick={handleSaveWithUnpublish}>
+            <Button variant="outline-primary" onClick={handleSave}>
               {edit ? "Save Changes" : "Save"}
             </Button>
-            <Button variant="outline-primary" onClick={handleSaveWithPublish}>
+            <Button variant="outline-primary" onClick={handleSave}>
               {edit ? "Save Changes" : "Save"} and Publish
             </Button>
           </Modal.Footer>
@@ -278,7 +297,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
                         <Col className="d-flex justify-content-end mx-2">
                           <Button variant="outline-danger mx-2">Delete</Button>
-                          <Button variant="outline-info mx-2">Edit</Button>
+                          <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
                           <Button variant="outline-primary mx-2">
                             Publish
                           </Button>
@@ -299,7 +318,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
                         <Col className="d-flex justify-content-end mx-2">
                           <Button variant="outline-danger mx-2">Delete</Button>
-                          <Button variant="outline-info mx-2">Edit</Button>
+                          <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
                           <Button variant="outline-primary mx-2">
                             Publish
                           </Button>
