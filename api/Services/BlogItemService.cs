@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using api.Models.DTO;
 using api.Services.Context;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -74,7 +75,7 @@ namespace api.Services
 
         public IEnumerable<BlogItemModel> GetPublishedItems()
         {
-            return _context.BlogInfo.Where(item => item.IsPublished);
+            return _context.BlogInfo.Where(item => item.IsPublished && item.IsDeleted == false);
         }
 
         public IEnumerable<BlogItemModel> GetItemsByUserId(int userId)

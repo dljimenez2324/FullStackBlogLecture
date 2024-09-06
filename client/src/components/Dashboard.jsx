@@ -20,7 +20,6 @@ import {
   GetItemsByUserId,
   LoggedInData,
   updateBlogItems,
-
 } from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode, onLogin }) => {
@@ -46,10 +45,10 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   // copied from slack
   const [blogItems, setBlogItems] = useState([]);
 
-  const handleSave = async ({target:{textContent}}) => {
+  const handleSave = async ({ target: { textContent } }) => {
     let { userId, publisherName } = LoggedInData();
     const published = {
-      Id: edit ? blogId: 0,
+      Id: edit ? blogId : 0,
       UserId: userId,
       PublisherName: publisherName,
       Tag: blogTags,
@@ -58,7 +57,8 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       Description: blogDescription,
       Date: new Date(),
       Category: blogCategory,
-      IsPublished: textContent === "Save" || textContent == "Save Changes" ? false : true,
+      IsPublished:
+        textContent === "Save" || textContent == "Save Changes" ? false : true,
       IsDeleted: false,
     };
     console.log(published);
@@ -66,11 +66,9 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
     // handel edit function
     let result = false;
-    if(edit)
-    {
-      result =  await updateBlogItems(published);
-    }
-    else{
+    if (edit) {
+      result = await updateBlogItems(published);
+    } else {
       result = await AddBlogItems(published);
     }
 
@@ -78,9 +76,8 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       let userBlogItems = await GetItemsByUserId(userId);
       setBlogItems(userBlogItems);
       console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
-    }
-    else {
-      alert(`Blog items not ${edit ? "Updated" : "Added"}`)
+    } else {
+      alert(`Blog items not ${edit ? "Updated" : "Added"}`);
     }
   };
 
@@ -113,8 +110,21 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const handleClose = () => setShow(false);
 
   // handleShow
-  const handleShow = (e, {id, publishername, userId, IsDeleted, isPublished, title, description ,category ,tag ,image}) => {
-    
+  const handleShow = (
+    e,
+    {
+      id,
+      publishername,
+      userId,
+      IsDeleted,
+      isPublished,
+      title,
+      description,
+      category,
+      tag,
+      image,
+    }
+  ) => {
     setShow(true);
 
     if (e.target.textContent === "Add Blog Item") {
@@ -139,7 +149,6 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     setIsDeleted(IsDeleted);
     setIsPublished(isPublished);
     console.log(e.target.textContent, edit);
-
   };
 
   const handleTitle = (e) => {
@@ -171,38 +180,31 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
 
   // function to help us handle publish and unpublish
   const handlePublish = async (item) => {
-
-    // by using curly braces around userId we destructure the UserData and grab only userId  and we dont have to say  variable.userId in our GetItemsByUserId (  here ) 
+    // by using curly braces around userId we destructure the UserData and grab only userId  and we dont have to say  variable.userId in our GetItemsByUserId (  here )
     const { userId } = JSON.parse(localStorage.getItem("UserData"));
     item.isPublished = !item.isPublished;
 
     let result = await updateBlogItems(item);
-    if(result)
-    {
+    if (result) {
       let userBlogItems = await GetItemsByUserId(userId);
       setBlogItems(userBlogItems);
-      
-    }else{
+    } else {
       alert(`Blog item not ${edit ? "Updated" : "Added"}`);
     }
-
-  }
+  };
 
   // our delete function
-  const handleDelete = async (item) =>
-  {
+  const handleDelete = async (item) => {
     // remember we are not actually deleting we're just seting the usestate to true or false
     item.isDeleted = !item.isDeleted;
     let result = await updateBlogItems(item);
-    if(result)
-    {
+    if (result) {
       let userBlogItems = await GetItemsByUserId(item.userId);
       setBlogItems(userBlogItems);
-
-    }else {
+    } else {
       alert(`Blog item not ${edit ? "Updated" : "Added"}`);
     }
-  }
+  };
 
   // navigate variable for use
   let navigate = useNavigate();
@@ -239,7 +241,23 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
         className={isDarkMode ? "bg-dark text-light p-5" : "bg-light p-5"}
         fluid
       >
-        <Button variant="outline-primary m-2" onClick={(e) => handleShow(e, {id:0, userId:userId, title:"", description:"", category:"", tag:"", image:"", IsDeleted:false, isPublished:false, publishername:publisherName})}>
+        <Button
+          variant="outline-primary m-2"
+          onClick={(e) =>
+            handleShow(e, {
+              id: 0,
+              userId: userId,
+              title: "",
+              description: "",
+              category: "",
+              tag: "",
+              image: "",
+              IsDeleted: false,
+              isPublished: false,
+              publishername: publisherName,
+            })
+          }
+        >
           Add Blog Item
         </Button>
         <Button variant="outline-primary m-2" onClick={handleShow}>
@@ -326,7 +344,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
         {/* Check to see if blogitems has info in it */}
         {isLoading ? (
           <>
-            <Spinner animation="grow" variant="info" /> 
+            <Spinner animation="grow" variant="info" />
             <h2>...Loading</h2>
           </>
         ) : blogItems.length === 0 ? (
@@ -342,16 +360,50 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
                 {blogItems.map(
                   (item, i) =>
                     item.isPublished && (
-                      <ListGroup key={i}>
-                        {item.title}
-
-                        <Col className="d-flex justify-content-end mx-2">
-                          <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
-                          <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
-                          <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)}>
-                            Unpublished
+                      <ListGroup as="ul" className="mb-2" key={item.id}>
+                        <ListGroup.Item as={"li"} md={2}>
+                          <h3>Title:</h3>
+                          {item.title}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={3}>
+                          <h3>Description:</h3>
+                          {item.description}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={2}>
+                          {" "}
+                          <h3>Category:</h3> {item.category}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={2}>
+                          <h3>Tags:</h3>
+                          {item.tag}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={3}>
+                          Image:{" "}
+                          {item.image ? item.image.slice(5, 14) : "No image"}
+                        </ListGroup.Item>
+                        <ListGroup.Item
+                          as={"li"}
+                          className="d-flex justify-content-end"
+                        >
+                          <Button
+                            variant="outline-danger mx-2"
+                            onClick={() => handleDelete(item)}
+                          >
+                            Delete
                           </Button>
-                        </Col>
+                          <Button
+                            variant="outline-info mx-2"
+                            onClick={(e) => handleShow(e, item)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline-primary mx-2"
+                            onClick={() => handlePublish(item)}
+                          >
+                            Unpublish
+                          </Button>
+                        </ListGroup.Item>
                       </ListGroup>
                     )
                 )}
@@ -363,16 +415,50 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
                 {blogItems.map(
                   (item, i) =>
                     !item.isPublished && (
-                      <ListGroup key={i}>
-                        {item.title}
-
-                        <Col className="d-flex justify-content-end mx-2">
-                          <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
-                          <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
-                          <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)}>
+                      <ListGroup as="ul" className="mb-2" key={item.id}>
+                        <ListGroup.Item as={"li"} md={2}>
+                          <h3>Title:</h3>
+                          {item.title}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={3}>
+                          <h3>Description:</h3>
+                          {item.description}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={2}>
+                          {" "}
+                          <h3>Category:</h3> {item.category}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={2}>
+                          <h3>Tags:</h3>
+                          {item.tag}
+                        </ListGroup.Item>
+                        <ListGroup.Item as={"li"} md={3}>
+                          Image:{" "}
+                          {item.image ? item.image.slice(5, 14) : "No image"}
+                        </ListGroup.Item>
+                        <ListGroup.Item
+                          as={"li"}
+                          className="d-flex justify-content-end"
+                        >
+                          <Button
+                            variant="outline-danger mx-2"
+                            onClick={() => handleDelete(item)}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            variant="outline-info mx-2"
+                            onClick={(e) => handleShow(e, item)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline-primary mx-2"
+                            onClick={() => handlePublish(item)}
+                          >
                             Publish
                           </Button>
-                        </Col>
+                        </ListGroup.Item>
                       </ListGroup>
                     )
                 )}

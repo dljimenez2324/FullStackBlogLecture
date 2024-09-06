@@ -60,7 +60,7 @@ const App = () => {
             <NavBar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} user={user} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
           </Container>
           <CarouselHero isDarkMode={isDarkMode} />
-          <Row className="text-center">
+          <Row className="">
             <Col>
               <h1>Our Blog</h1>
             </Col>
