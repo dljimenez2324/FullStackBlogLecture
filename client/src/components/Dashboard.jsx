@@ -19,6 +19,8 @@ import {
   checkToken,
   GetItemsByUserId,
   LoggedInData,
+  updateBlogItems,
+
 } from "../Services/DataService";
 
 const Dashboard = ({ isDarkMode, onLogin }) => {
@@ -38,7 +40,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const [blogId, setBlogId] = useState(0);
-  const [IsDeleted, setIsDeleted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
   // copied from slack
@@ -47,7 +49,7 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
   const handleSave = async ({target:{textContent}}) => {
     let { userId, publisherName } = LoggedInData();
     const published = {
-      Id: 0,
+      Id: edit ? blogId: 0,
       UserId: userId,
       PublisherName: publisherName,
       Tag: blogTags,
@@ -56,16 +58,29 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
       Description: blogDescription,
       Date: new Date(),
       Category: blogCategory,
-      IsPublished: textContent === "Save" ? false : true,
+      IsPublished: textContent === "Save" || textContent == "Save Changes" ? false : true,
       IsDeleted: false,
     };
     console.log(published);
     handleClose();
-    let result = await AddBlogItems(published);
+
+    // handel edit function
+    let result = false;
+    if(edit)
+    {
+      result =  await updateBlogItems(published);
+    }
+    else{
+      result = await AddBlogItems(published);
+    }
+
     if (result) {
       let userBlogItems = await GetItemsByUserId(userId);
       setBlogItems(userBlogItems);
       console.log(userBlogItems, "This is from our UserBlogItems in Dashboard");
+    }
+    else {
+      alert(`Blog items not ${edit ? "Updated" : "Added"}`)
     }
   };
 
@@ -153,6 +168,41 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
     };
     reader.readAsDataURL(file);
   };
+
+  // function to help us handle publish and unpublish
+  const handlePublish = async (item) => {
+
+    // by using curly braces around userId we destructure the UserData and grab only userId  and we dont have to say  variable.userId in our GetItemsByUserId (  here ) 
+    const { userId } = JSON.parse(localStorage.getItem("UserData"));
+    item.isPublished = !item.isPublished;
+
+    let result = await updateBlogItems(item);
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(userId);
+      setBlogItems(userBlogItems);
+      
+    }else{
+      alert(`Blog item not ${edit ? "Updated" : "Added"}`);
+    }
+
+  }
+
+  // our delete function
+  const handleDelete = async (item) =>
+  {
+    // remember we are not actually deleting we're just seting the usestate to true or false
+    item.isDeleted = !item.isDeleted;
+    let result = await updateBlogItems(item);
+    if(result)
+    {
+      let userBlogItems = await GetItemsByUserId(item.userId);
+      setBlogItems(userBlogItems);
+
+    }else {
+      alert(`Blog item not ${edit ? "Updated" : "Added"}`);
+    }
+  }
 
   // navigate variable for use
   let navigate = useNavigate();
@@ -296,10 +346,10 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
                         {item.title}
 
                         <Col className="d-flex justify-content-end mx-2">
-                          <Button variant="outline-danger mx-2">Delete</Button>
+                          <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
                           <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
-                          <Button variant="outline-primary mx-2">
-                            Publish
+                          <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)}>
+                            Unpublished
                           </Button>
                         </Col>
                       </ListGroup>
@@ -317,9 +367,9 @@ const Dashboard = ({ isDarkMode, onLogin }) => {
                         {item.title}
 
                         <Col className="d-flex justify-content-end mx-2">
-                          <Button variant="outline-danger mx-2">Delete</Button>
+                          <Button variant="outline-danger mx-2" onClick={() => handleDelete(item)}>Delete</Button>
                           <Button variant="outline-info mx-2" onClick={(e) => handleShow(e, item)}>Edit</Button>
-                          <Button variant="outline-primary mx-2">
+                          <Button variant="outline-primary mx-2" onClick={() => handlePublish(item)}>
                             Publish
                           </Button>
                         </Col>

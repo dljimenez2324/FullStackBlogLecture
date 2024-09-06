@@ -150,4 +150,33 @@ const GetItemsByUserId = async (UserId) =>
     return data;
 }
 
-export { checkToken, createAccount, login, GetLoggedInUser, LoggedInData, sendData, AddBlogItems, getBlogItems, GetItemsByUserId }
+// Function to help us update our blog items
+const updateBlogItems = async (blogItems) => 
+{
+    const result = await fetch(`http://localhost:5041/api/Blog/UpdateBlogItems`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(blogItems)
+    })
+    if(!result.ok)
+    {
+        const message = `Yo! You have an error In your updateBlogItems DataService! Check your code ${result.status}`
+        throw new Error(message);
+
+    }
+    let data = await result.json();
+    console.log(data, "from our UpdateBlogItems in DataService");
+    return data
+}
+
+// Function to get our published blog items to display
+const getPublishedBlogItems = async () =>
+{
+    let result = await fetch("http://localhost:5041/api/Blog/GetPublishedItems");
+    let data = await result.json();
+    return data;
+}
+
+export { checkToken, createAccount, login, GetLoggedInUser, LoggedInData, sendData, AddBlogItems, getBlogItems, GetItemsByUserId, updateBlogItems, getPublishedBlogItems }
