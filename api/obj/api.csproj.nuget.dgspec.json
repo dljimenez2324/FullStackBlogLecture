@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Owner\\OneDrive\\CodeStack\\Level4\\FullStackBlog\\api\\api.csproj": {}
+    "C:\\Users\\Ucrda\\OneDrive\\CodeStack\\Level4\\FullStackBlogCopy\\FullStackBlogLecture\\api\\api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Owner\\OneDrive\\CodeStack\\Level4\\FullStackBlog\\api\\api.csproj": {
+    "C:\\Users\\Ucrda\\OneDrive\\CodeStack\\Level4\\FullStackBlogCopy\\FullStackBlogLecture\\api\\api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Owner\\OneDrive\\CodeStack\\Level4\\FullStackBlog\\api\\api.csproj",
+        "projectUniqueName": "C:\\Users\\Ucrda\\OneDrive\\CodeStack\\Level4\\FullStackBlogCopy\\FullStackBlogLecture\\api\\api.csproj",
         "projectName": "api",
-        "projectPath": "C:\\Users\\Owner\\OneDrive\\CodeStack\\Level4\\FullStackBlog\\api\\api.csproj",
-        "packagesPath": "C:\\Users\\Owner\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Owner\\OneDrive\\CodeStack\\Level4\\FullStackBlog\\api\\obj\\",
+        "projectPath": "C:\\Users\\Ucrda\\OneDrive\\CodeStack\\Level4\\FullStackBlogCopy\\FullStackBlogLecture\\api\\api.csproj",
+        "packagesPath": "C:\\Users\\Ucrda\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Ucrda\\OneDrive\\CodeStack\\Level4\\FullStackBlogCopy\\FullStackBlogLecture\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Owner\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Ucrda\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -89,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
